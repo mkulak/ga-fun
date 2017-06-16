@@ -1,0 +1,78 @@
+buildscript {
+    ext.kotlin_version = '1.1.2-3'
+    ext.lwjglVersion = "3.1.2"
+    ext.lwjglNatives = "natives-macos"
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+
+task runAwt(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.github.mkulak.ga.MainKt'
+    args = ['awt']
+    jvmArgs = ["-Dsun.java2d.opengl=true"]
+}
+
+task runOpengl(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.github.mkulak.ga.MainKt'
+    args = ['opengl']
+    jvmArgs = ["-XstartOnFirstThread"]
+}
+
+defaultTasks 'runAwt'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile 'org.jetbrains.kotlinx:kotlinx-support-jdk8:0.3'
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.8.7"
+
+    compile "org.lwjgl:lwjgl:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl-glfw:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl-jemalloc:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl-openal:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl-opengl:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl-stb:${lwjglVersion}"
+
+    runtime "org.lwjgl:lwjgl:${lwjglVersion}:${lwjglNatives}"
+    runtime "org.lwjgl:lwjgl-glfw:${lwjglVersion}:${lwjglNatives}"
+    runtime "org.lwjgl:lwjgl-jemalloc:${lwjglVersion}:${lwjglNatives}"
+    runtime "org.lwjgl:lwjgl-openal:${lwjglVersion}:${lwjglNatives}"
+    runtime "org.lwjgl:lwjgl-opengl:${lwjglVersion}:${lwjglNatives}"
+    runtime "org.lwjgl:lwjgl-stb:${lwjglVersion}:${lwjglNatives}"
+
+    testCompile "junit:junit:4.11"
+    testCompile "org.assertj:assertj-core:3.6.1"
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}
+
+compileKotlin {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+        apiVersion = "1.1"
+        languageVersion = "1.1"
+    }
+}
+
